@@ -5,6 +5,11 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'puma'
 gem 'pry-rails'
 
+group :production do
+  gem 'rails_12factor'
+end
+
+
 group :development, :test do
   gem 'pry-byebug'
   gem 'dotenv-rails'
