@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
-  before_action :verify_token!
+  before_action :verify_token!, except: :home
 
   def home
     render text: "Brandfolder SHA Checker for BF-FastPass™"
