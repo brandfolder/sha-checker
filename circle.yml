@@ -15,7 +15,7 @@ deployment:
     branch: master
     commands:
       # Pull unshallow
-      - git fetch --unshallow
+      - git fetch --unshallow > /dev/null || true
 
       # === Flynn ===
       # Prepare Flynn
