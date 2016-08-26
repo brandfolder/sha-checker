@@ -1,0 +1,30 @@
+machine:
+  ruby:
+    version: 2.3.1
+
+dependencies:
+  cache_directories:
+    - 'vendor/bundle'
+
+test:
+  override:
+    - 'true'
+
+deployment:
+  main:
+    branch: master
+    commands:
+      # Pull unshallow
+      - git fetch --unshallow
+
+      # === Flynn ===
+      # Prepare Flynn
+      - L=/home/ubuntu/bin/flynn && curl -sSL -A "`uname -sp`" https://dl.flynn.io/cli | zcat >$L && chmod +x $L
+      - flynn cluster add -p $FLYNN_STAGING_TLS_PIN staging $FLYNN_STAGING_CONTROLLER_DOMAIN $FLYNN_STAGING_CONTROLLER_KEY
+      - flynn -a sha-checker remote add
+
+      # Deploy to flynn
+      - git push flynn $CIRCLE_SHA1:master
+
+      # Upcheck
+      - bash -c "sec=0 ; until \$(curl -k --output /dev/null --silent --head --fail https://sha-checker.staging.brandfolder.tv); do if [ \$sec -lt 120 ] ; then printf '.' && let sec+=1 && sleep 1 ; else echo ' timed out\!' ; exit 2 ; fi ; done"
